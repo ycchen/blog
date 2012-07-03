@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+
+<%= render @post %>
+
+<p>
+	<%= link_to "Edit", edit_post_path(@post) %> |
+	<%= link_to "Destroy", @post, :method => :delete, :confirm => "Are you sure?" %> |
+	<%= link_to "See All Posts", posts_path %>
+</p>
+
+
+<div id="comments_count"><%= @post.comments.count%></div>
+<!-- 
+<% @post.comments.each do |comment| %>
+	<p><b><%= comment.name %> said:</b></p>
+	<p><%= comment.body %></p>
+	<p><%= time_ago_in_words comment.created_at %> ago </p>
+	<p><%= link_to "Delete", [@post,comment], :method => :delete, :confirm => "Are you sure?" %></p>
+<% end %>
+-->
+
+<div id="comments">
+	<%= render @post.comments %>
+</div>
+
+<h1/>Add a comment:</h1>
+
+<%= render 'comments/form' %>

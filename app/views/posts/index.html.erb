@@ -1,0 +1,9 @@
+<% title "Listing Posts" %>
+
+<%= render @posts %>
+
+
+<% if logged_in? %>
+<%= link_to 'New Post', new_post_path %>  
+<% end %>
+

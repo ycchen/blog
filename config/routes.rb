@@ -12,6 +12,8 @@ Myblog::Application.routes.draw do
 
   match 'login' => 'sessions#new', :as => :login
 
+  match '/feed' => 'posts#index', :as => :feed, :defaults => {:format => 'atom'}
+
   resources :sessions
 
   resources :users

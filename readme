@@ -34,6 +34,15 @@ http://jashkenas.github.com/coffee-script/
 http://www.communityguides.eu/articles/14
 
 
+#############################################################
+# git remote add origin https://github.com/ycchen/blog.git
+#
+################################
+# git push origin master
+#
+#############################################################
+
+
 project myblog
 
 # create pdf

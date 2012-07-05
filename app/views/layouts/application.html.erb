@@ -11,8 +11,8 @@
   <body>
     <div id="container">
       <div id="top_links_container">
-        [<%= link_to "Feed", feed_path %>]
-          <%= link_to "Home", root_path %> |
+        <%= link_to "Home", root_path %> |
+        <%= link_to "Feed", feed_path %> |
         <% if current_user %>
           logged in as <%= current_user.username %> |
           <%= link_to "Logout", logout_path %>

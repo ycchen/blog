@@ -32,3 +32,255 @@ http://jashkenas.github.com/coffee-script/
 
 # adding atom feed to rails application
 http://www.communityguides.eu/articles/14
+
+
+project myblog
+
+# create pdf
+# add following gem to Gemfile
+ gem ‘prawn’
+ gem ‘prawnto’
+
+http://rubygems.org/gems/prawn
+http://rubygems.org/gems/prawnto
+
+
+$ rails new ror_todo
+
+Add gems to Gemfile
+gem ‘nifty-generators’
+# make sure this gem get add in order to do the nifty-generators's  authentication
+gem 'bcrypt-ruby', :require => 'bcrypt'
+gem ‘faker’
+gem ‘populator’
+gem ‘gravtastic’
+gem ‘will_paginate’
+gem ‘kaminari’
+gem ‘prawn’
+gem ‘prawnto’
+
+https://github.com/ryanb/nifty-generators
+http://rubygems.org/gems/faker
+
+
+1.	Create user authentication using nifty-generators
+2.	Pagination by using will_paginate or Kaminari gems
+3.	Create pdf output by using prawn and prawnto gems
+#create layout
+$ rails g nifty:layout
+
+# create user authentication using nifty-generators
+$ rails g nifty:authentication
+$ rake db:migrate
+
+# create Posts using scaffolding
+$ rails g scaffold post title:string body:text
+
+#migrate post
+$ rake db:migrate
+
+#modify routes to point root to post index
+rm \public\index.html
+
+
+
+# test application 
+$ rails s
+
+# while test application, make sure the css backgroup color  don't get over write by scaffolds.css.scss
+
+# creating comments using scaffolding
+$ rails g scaffold comment name:string body:text post:references
+#post:references is pulling postid to comments table
+
+
+#Add user to post model
+http://stackoverflow.com/questions/4954969/rails-3-migrations-adding-reference-column
+$rails g migration addUserIdToPosts user_id:integer
+$ rake db:migrate
+
+# adding Login, Logout, and Signup links on the top of page
+# we use ‘nifty-generators’, it has sets of variables already set for us to use "current_user"
+# as well as path such as logout_path, login_path, and signup_path
+
+# adding before_filter :login_required on posts_controller.rb
+before_filter :login_required, :only => [:create, :new, :destroy, :update, :update]
+or
+before_filter :login_required :except => [:index]
+
+#add this line to post index before @post.save, this is to assign current user to a post
+@post = Post.new(params[:post])
+@post.user = current_user
+
+
+#Assign relationship between post and comment models
+Post : 
+has_many : comments
+belongs_to :user
+
+Comment: 
+belongs_to :post
+
+User: 
+has_many :posts
+
+#adding validation for post and comment model
+Post:
+validates :title, :presence => true
+validates :body, :presence => true
+Comment:
+validates :name, :presence => true
+posts/show.html.erb
+<% @post.comments.each do |comment| %>
+	<p><b><%= comment.name %> said:</b></p>
+	<p><%= comment.body %></p>
+	<p><%= time_ago_in_words comment.created_at %> ago </p>
+	<p><%= link_to "Delete", [@post,comment], :method => :delete, :confirm => "Are you sure?" %></p>
+<% end %>
+
+can be replace with partial by passing @post.comments
+<%= render @post.comments %>
+
+# create comments/_comment.html.erb
+<%= div_for comment do %>
+ <p id="notice"><%= notice %></p>
+ <p><b><%= comment.name %></b> says</p>
+ <p><b>Body:</b><%= comment.body %></p>
+ <p><b>Posted: <%= time_ago_in_words(comment.created_at) %> ago</b></p>
+ <%= link_to "Delete", [@post,comment], :method => :delete, :confirm=> "Are you sure?"%>
+<% end %>
+
+
+
+
+# prevent current user to modify the post from other user
+# add this on show.html.erb
+
+# adding comment section under each post. on show page
+
+
+Rails Best Practices
+http://rails-bestpractices.com/posts/61-simplify-render-in-views
+
+
+#adding "debugger" for debug purpose
+# open the console with --debugger option
+
+# while open server to test the logic, you can use 
+$ rails s --debugger
+$ list, up, down
+$ p action_name
+$ irb
+
+$ @comment.inspect
+$ @comment.new_record?
+
+
+
+# check routes 
+$ rake routes
+
+# How to add an Atom feed to a rails 3 application
+http://www.communityguides.eu/articles/14
+
+1. add format.atom in the index method on post controller
+2. add index.atom.builder file under view\post
+atom_feed do |feed|
+	feed.title("My blog!")
+	feed.update("@post.frist.created_at")
+
+	@posts.each do |post|
+		feed.entry(post) do |entry|
+			entry.title(post.title)
+			entry.content(post.body, :type => 'html')
+			entry.author { |author| author.name("Yungchih Chen")}
+		end
+	end
+end
+3. modify config/routes.rb
+match '/feed' => 'post#index', :as => :feed, :defaults => {:format => 'atom'}
+
+4. add link on layout 
+<head>
+	<%= auto_discovery_link_tag :atom, feed_path %>
+</head>
+
+<%= link_to "feed",  feed_path %>
+
+
+
+
+
+
+$ rake db:drop
+$ rake db:create # create a database
+$ rake db:migrate
+$ rake db:reset
+
+#create task by using scaffold command
+$ rails g scaffold task name:string status:boolean due_at:datetime
+$ rake db:migrate
+# destroy scaffold model
+$ rails destroy scaffold task
+
+add pagination to list page
+
+
+# get all column from Task model
+t = Task.column_names
+# string upcase and downcase, titleize
+sort = "name"
+sort.upcase  # "NAME"
+sort.downcase # "name"
+sort.titleize #"Name"
+
+
+add bootstrap
+add gem 'twitter-bootstrap-rails' in assets sectionin the Gemfile
+# create bootstrap
+$ rails g bootstrap:install
+
+
+http://railscasts.com/episodes/145-integrating-active-merchant?autoplay=true
+# create a store controller
+$ rails g controller store index
+
+# change root to store_path
+
+#create a cart model
+$ rails g model cart purchased_at:datetime
+
+#create a lineItem model
+$ rails g model lineitem unit_price:decimal product_id:integer cart_id:integer quantity:integer
+
+# create a lineitem controller
+$rails g controller lineitems new create
+
+ 
+
+# create order model by using nifty_scaffold
+$ rails g nifty:scaffold order cart_id:integer ip_address:string first_name:string last_name:string card_type:string card_expires_on:date
+
+
+
+# create order_transaction model
+$ rails g model order_transaction order_id:integer action:string amount:integer success:boolean authorization:string message:string params:text
+
+# do db:migrate for all of db script
+$ rake db:migrate
+
+
+# create populate.rake to populate data to different tables
+# using populator gem, faker gem
+
+# using or equals(||=) to set variables in Ruby on Rails
+http://www.paulsturgess.co.uk/articles/70-using-or-equals-to-set-variables-in-ruby-on-rails
+Using 'or equals' is great for creating and setting variables when they don't exist - useful for default values.
+>> foo = “hello”
+	“hello”
+>> foo ||= “goodbye”
+	“hello”
+
+# create cart controller to show the cart with lineitems
+$ rails g controller carts show
+
